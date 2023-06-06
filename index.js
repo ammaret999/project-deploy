@@ -1,36 +1,41 @@
-import pg from "pg";
+const AWS = require("aws-sdk");
 
-export const handler = async (event) => {
-  const rdsConfig = {
-    host: process.env.RDS_HOST,
-    user: process.env.RDS_USER,
-    password: process.env.RDS_PASSWORD,
-    database: process.env.RDS_DATABASE,
-    port: process.env.RDS_PORT,
+const dynamo = new AWS.DynamoDB.DocumentClient();
+
+exports.handler = async (event, context) => {
+  let body;
+  let statusCode = 200;
+  const headers = {
+    "Content-Type": "application/json",
   };
 
-  const client = new pg.Client(rdsConfig);
-
   try {
-    await client.connect();
-    console.log("Connected to RDS successfully");
-
-    const column = `INSERT INTO main (name) VALUES ('${event.name}')`;
-
-    const res = await client.query(column);
-    console.log("Query result:", res.rows);
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify(res.rows),
-    };
-  } catch (error) {
-    console.error("Error", error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ message: "Error" }),
-    };
+    switch (event.routeKey) {
+      case "POST /items":
+        let requestJSON = JSON.parse(event.body);
+        await dynamo
+          .post({
+            TableName: "http-crud-tutorial-items",
+            Item: {
+              name: requestJSON.name,
+            },
+          })
+          .promise();
+        body = `Put item ${requestJSON.name}`;
+        break;
+      default:
+        throw new Error(`Unsupported route: "${event.routeKey}"`);
+    }
+  } catch (err) {
+    statusCode = 400;
+    body = err.message;
   } finally {
-    await client.end();
+    body = JSON.stringify(body);
   }
+
+  return {
+    statusCode,
+    body,
+    headers,
+  };
 };
