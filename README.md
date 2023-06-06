@@ -10,3 +10,6 @@ database เชื่อมด้วย dynamodb
 
 ![image](https://github.com/ammaret999/project-deploy/assets/119582626/cb17dc60-a5c5-4c34-b109-4025f21f83a7)
 สุดท้ายหน้าบ้านได้ออกมาประมาณนี้ครับ แต่ยังต่อให้รับจากหน้าบ้านหน้านี้ไม่ได้ทำไม่ทันเวลาครับ
+
+![image](https://github.com/ammaret999/project-deploy/assets/119582626/c590ea8e-de76-4d76-aedb-c7af8b2dfad9)
+สิ่งที่ทำคือตามรูปแบบนี้ครับด้วยที่หน้าบ้านใช้ amplify dploy
